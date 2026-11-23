@@ -3,6 +3,8 @@
 
 set(app_sources
 	main.cpp
+	ota_service.cpp
+	ota_update.cpp
 	display_setup.cpp
 	espnow_rx.cpp
 	rpm_indicator.cpp

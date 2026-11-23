@@ -23,6 +23,7 @@
 #include <lvgl.h>
 #include "ui/ui.h"
 #include "espnow_rx.h"
+#include "ota_update.h"
 #include "display_setup.h"
 #include "ui_scale_helpers.h"
 #include "esp_lcd_touch.h"
@@ -93,6 +94,7 @@ extern "C" void app_main() {
 
     setupEspNowReceiver();
     printf("ESPNOW OK\n");
+    OtaUpdate::begin();
     printMemoryStats(); 
 
 /*     while(1) {
@@ -101,6 +103,7 @@ extern "C" void app_main() {
         lv_timer_handler();
         ui_tick();
         updateUiFromEspNow();
+        OtaUpdate::tick();
         _lock_release(&lvgl_api_lock);
 
         vTaskDelay(5);
@@ -115,6 +118,7 @@ extern "C" void app_main() {
         
         ui_tick();
         updateUiFromEspNow();
+        OtaUpdate::tick();
         
         _lock_release(&lvgl_api_lock);
 

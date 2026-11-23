@@ -9,3 +9,8 @@ trap 'rm -rf "$test_dir"' EXIT
 "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -I"$project_dir/src" \
     "$project_dir/test/test_gauge_smoothing.cpp" -o "$test_dir/test_gauge_smoothing"
 "$test_dir/test_gauge_smoothing"
+
+"${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -I"$project_dir/src" \
+    "$project_dir/test/test_ota_policy.cpp" -o "$test_dir/test_ota_policy"
+"$test_dir/test_ota_policy"
+python3 "$project_dir/test/test_release_package.py"

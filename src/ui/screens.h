@@ -68,6 +68,7 @@ typedef struct _objects_t {
     lv_obj_t *main_lbl_fuel_level_val;
     lv_obj_t *main_lbl_fuel_level_title;
     lv_obj_t *main_but_dim;
+    lv_obj_t *main_but_update;
 } objects_t;
 
 extern objects_t objects;

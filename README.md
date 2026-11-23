@@ -50,7 +50,9 @@ At startup the firmware follows this order:
 1. Initialize the display system (`initializeDisplaySystem()`: I2C, LCD/LVGL, CH422G backlight, UI init, touch)
 2. Start the ESP-NOW receiver (`setupEspNowReceiver()`)
 
-After that, the main loop polls touch input, runs `lv_timer_handler()`/`ui_tick()`, and calls `updateUiFromEspNow()`. The UI path applies RS485 readings for water pressure, fuel pressure, cylinder-head temperatures, and exhaust temperatures, and it applies fuel level, RPM, and bus voltage from the second ESP32 sender.
+After that, the main loop polls touch input, runs `lv_timer_handler()`/`ui_tick()`,
+and calls `updateUiFromEspNow()` and `OtaUpdate::tick()`. Updates download in a
+separate task; LVGL remains on the main task. The UI path applies RS485 readings for water pressure, fuel pressure, cylinder-head temperatures, and exhaust temperatures, and it applies fuel level, RPM, and bus voltage from the second ESP32 sender.
 
 ## Build And Flash
 
@@ -84,9 +86,11 @@ See [docs/public-release.md](docs/public-release.md) for the local audit finding
 publication checklist, and release artifact commands. Private credentials belong in
 ignored local files, never in source files or release binaries.
 
-The selected 16 MB partition table contains two OTA application slots. The dashboard
-currently receives data over ESP-NOW; it does not yet download or install firmware
-from GitHub Releases. Release hosting is preparation for that future implementation.
+Hold the **Update** button for **3 seconds**, then release to open the update menu.
+Set up the same Wi-Fi router as the sensors (2.4 GHz, fixed channel 1), check for a
+release, then confirm installation. Credentials stay on the device. GitHub Actions
+builds and attaches the firmware when you publish a stable release. See
+[docs/OTA.md](docs/OTA.md) for first USB installation, operation, and release steps.
 
 ## License
 
@@ -124,7 +128,7 @@ This matches the project display color format and helps reduce CPU usage.
 - `app_main()` in [src/main.cpp](src/main.cpp) starts the system: `initializeDisplaySystem()` then `setupEspNowReceiver()`, followed by the main loop
 - `initializeDisplaySystem()` in [src/display_setup.cpp](src/display_setup.cpp) sets up the RGB display, LVGL, draw buffers, tick timer, CH422G backlight control, UI initialization, and touch
 - `touchInitialize()` connects the GT911 touch controller to LVGL
-- `setupEspNowReceiver()` in [src/espnow_rx.cpp](src/espnow_rx.cpp) starts the minimal Wi-Fi/ESP-NOW receiver path for incoming sensor packets
+- `setupEspNowReceiver()` in [src/espnow_rx.cpp](src/espnow_rx.cpp) starts the shared Wi-Fi/ESP-NOW radio for incoming sensor packets
 - `onEspNowReceive()` validates and stores the newest incoming sensor packet
 - `updateUiFromEspNow()` applies RS485 and ESP32_2 values to dashboard widgets with per-group rate limiting
 - `configureScaleBandsFromThresholds()` and friends in [src/ui_scale_helpers.cpp](src/ui_scale_helpers.cpp) configure gauge color bands and drive the animated RPM dot

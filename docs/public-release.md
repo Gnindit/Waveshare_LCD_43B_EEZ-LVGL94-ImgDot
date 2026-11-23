@@ -43,67 +43,21 @@ Confirm redistribution rights for dashboard artwork before publication. Before e
 publication, inspect `git diff --cached` for unintended local files and credentials,
 as well as any newly introduced historical commits.
 
-## Build and prepare release files
+## Automatic firmware releases
 
-From the directory containing `platformio.ini`:
+The OTA branch adds `.github/workflows/firmware.yml`. It builds/tests the source
+and attaches firmware, the board/version/checksum manifest, a USB recovery image,
+and notices automatically when a stable GitHub Release is published. No manual
+binary upload is required. See [OTA.md](OTA.md) for release tags, asset names,
+first USB installation, Wi-Fi setup and hardware test steps.
 
-```sh
-pio run -e waveshare_lcd_4_3
-mkdir -p dist
-cp .pio/build/waveshare_lcd_4_3/firmware.bin dist/firmware.bin
-(cd dist && sha256sum firmware.bin > firmware.bin.sha256)
-```
+The generated partition binary was checked against `default_16MB.csv`: `otadata`
+plus two application slots of 0x640000 bytes, with unchanged offsets. The updater
+writes the inactive slot and enables bootloader rollback. Credentials stay in NVS.
 
-Build from the reviewed release commit with a clean working tree before preparing
-final release assets. Record its commit ID, release tag, build environment and
-firmware version in the release notes. Test the resulting firmware on the display
-before declaring the release usable. Include the applicable third-party notices
-and license texts in the release distribution.
+## Verification boundary
 
-Attach `firmware.bin` and `firmware.bin.sha256` to a GitHub Release manually after
-review. The future stable download URL, once a published latest release has that
-asset, is:
-
-```text
-https://github.com/Gnindit/Waveshare_LCD_43B_EEZ-LVGL94-ImgDot/releases/latest/download/firmware.bin
-```
-
-This URL is documented by [GitHub's release linking guide](https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases).
-A tag-specific asset URL should be used when an update manifest pins a version.
-Do not feed bootloader, partition-table, or merged flash images into an application
-OTA updater.
-
-## Local verification
-
-Both the project build and a separate source-only copy built successfully with
-`pio run -e waveshare_lcd_4_3`. The copy excluded ignored LVGL demos/examples,
-editor state, build output, and local USB settings. Existing host tests passed via
-`bash test/run_host_tests.sh`. No firmware was uploaded; hardware behavior and
-remote GitHub access were not tested.
-
-## Remaining firmware work for OTA retrieval
-
-The selected `default_16MB.csv` has `otadata` plus `ota_0` and `ota_1`, each 0x640000
-bytes (6.25 MiB). Retain these offsets for deployed devices; the unused
-`8MB_no_ota.csv` is an alternative layout and is unsuitable for this OTA design.
-The cleanup build verified both slots in the generated `partitions.bin`.
-The sdkconfig still displays its upstream single-app defaults; PlatformIO uses the
-explicit CSV configured in `board_build.partitions` for the generated flash table.
-Validate the generated binary again for each release.
-
-The running application currently has no GitHub firmware retrieval/install path.
-Before enabling it, implement and test:
-
-- Wi-Fi provisioning that preserves the ESP-NOW channel and receiver behavior.
-- HTTPS downloads with certificate validation, redirects, timeouts, and image-size
-  limits. Never embed GitHub access tokens in a public firmware image.
-- A version/board-specific signed update manifest or signed firmware verification;
-  a checksum alone detects corruption but does not authenticate the publisher.
-- Writing to the inactive application slot, then checking the new firmware on first
-  boot with rollback enabled. Rollback is disabled in the current configuration.
-- Recovery over USB and hardware tests for failed downloads, power interruption,
-  invalid images, successful boot, and rollback.
-
-See the [ESP-IDF 6.0.1 OTA guide](https://docs.espressif.com/projects/esp-idf/en/v6.0.1/esp32s3/api-reference/system/ota.html)
-for application slots and rollback behavior. Hosting an asset does not by itself
-make the installed firmware OTA capable.
+The public-source cleanup was built and tested locally. The OTA branch must also
+pass host policy/packaging tests, the firmware build, a tagged-version packaging
+check, and the screen/radio/rollback hardware tests listed in [OTA.md](OTA.md).
+A successful local build does not verify GitHub Actions or a hardware installation.

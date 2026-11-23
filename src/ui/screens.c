@@ -826,6 +826,23 @@ void create_screen_main() {
             // main_but_dim
             lv_obj_t *obj = lv_button_create(parent_obj);
             objects.main_but_dim = obj;
+            lv_obj_set_pos(obj, 718, 428);
+            lv_obj_set_size(obj, 82, 50);
+            {
+                lv_obj_t *parent_obj = obj;
+                {
+                    lv_obj_t *obj = lv_label_create(parent_obj);
+                    lv_obj_set_pos(obj, 0, 0);
+                    lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+                    lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_label_set_text_static(obj, "Button");
+                }
+            }
+        }
+        {
+            // main_but_update
+            lv_obj_t *obj = lv_button_create(parent_obj);
+            objects.main_but_update = obj;
             lv_obj_set_pos(obj, 718, 370);
             lv_obj_set_size(obj, 82, 50);
             {

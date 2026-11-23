@@ -1,4 +1,5 @@
 #include "espnow_rx.h"
+#include "ota_update.h"
 
 #include <cmath>
 #include <cstdio>
@@ -485,9 +486,8 @@ void setupEspNowReceiver()
         ESP_ERROR_CHECK(err);
     }
 
-    // 2. CRITICAL: Removed esp_netif_init() and esp_netif_create_default_wifi_sta()
-    // This stops LwIP from loading into RAM.
-//    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    // Prepare on-demand IP networking before starting the shared Wi-Fi radio.
+    OtaUpdate::initializeNetwork();
 
     // 3. Force a slim buffer configuration
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -501,6 +501,7 @@ void setupEspNowReceiver()
 
     // 4. Initialize and start the radio
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     
     // Disable AMPDU (packet aggregation) to free up memory contexts
