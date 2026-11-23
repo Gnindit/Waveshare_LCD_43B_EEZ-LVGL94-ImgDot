@@ -1,0 +1,21 @@
+{
+  "files": [
+    "actions.h",
+    "fonts.h",
+    "images.c",
+    "images.h",
+    "screens.c",
+    "screens.h",
+    "structs.h",
+    "styles.c",
+    "styles.h",
+    "ui.c",
+    "ui.h",
+    "ui_font_jet_brains_mono_regular_34_bpp4.c",
+    "ui_font_jet_brains_mono_regular_60_bpp4.c",
+    "ui_font_jet_brains_mono_regular_clean_34_bpp4.c",
+    "ui_font_jet_brains_mono_regular_clean_60_bpp4.c",
+    "ui_image_rpm_dot_24.c",
+    "vars.h"
+  ]
+}

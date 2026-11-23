@@ -1,0 +1,56 @@
+# PlatformIO
+.pio/
+.sconsign.dblite
+
+# ESP-IDF / CMake generated output
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+
+# Python cache (scripts/tools)
+__pycache__/
+*.pyc
+
+# OS/editor noise
+*.tmp
+*.log
+Thumbs.db
+.DS_Store
+
+# VS Code local machine settings
+.vscode/.browse.c_cpp.db*
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/ipch/
+
+# Bundled LVGL folders not needed in this project repo
+components/lvgl/demos/
+components/lvgl/examples/
+components/lvgl/scripts/
+components/lvgl/docs/
+components/lvgl/tests/
+components/lvgl-archive/
+
+# Private machine configuration and credentials
+platformio.local.ini
+.env
+.env.*
+!.env.example
+*_secrets.h
+*_secrets.json
+*.key
+*.pem
+*.p12
+
+# EEZ Studio session state and generated LVGL source cache
+*.eez-project-ui-state
+components/lvgl/env_support/cmake/esp_sources.cmake
+sdkconfig.*.old
+
+# Release artifacts belong in GitHub Releases, not source control
+dist/
+
+# Private repository history backups; never publish
+.private-backups/
