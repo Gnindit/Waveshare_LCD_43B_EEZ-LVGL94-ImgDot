@@ -99,6 +99,11 @@ The script checks the actual image descriptor and slot size. The combined recove
 image is intended to be written at offset **0x0** on this exact 16 MB ESP32-S3 board.
 Prefer the PlatformIO USB upload command for recovery from a source checkout.
 
+ESP-IDF 6.0.1 has a flash-driver table entry that lacks the conditional guarding its
+DC-only functions. `scripts/fix_idf_flash.py` applies that specific, idempotent guard
+to the installed framework before building, including on GitHub's clean runner.
+It preserves the existing flash, PSRAM and display timing settings.
+
 ## Hardware validation before merging or publishing
 
 Local build/test success does not prove display, radio or OTA behavior on hardware.

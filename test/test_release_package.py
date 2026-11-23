@@ -24,6 +24,16 @@ def application(version="v1.0.0", project="waveshare_lcd_43"):
 
 
 class ReleaseTests(unittest.TestCase):
+    def test_flash_driver_fix_is_guarded_and_idempotent(self):
+        source = Path(__file__).resolve().parents[1] / "scripts/fix_idf_flash.py"
+        fix = runpy.run_path(str(source))["fix_source"]
+        entry = '    { "dummy sr3-bit3_4", probe, check, enable, status, dummy},\n'
+        original = "before\n" + entry + "after\n"
+        fixed = fix(original)
+        self.assertIn("#if CONFIG_SPI_FLASH_HPM_DC_ON\n" + entry + "#endif", fixed)
+        self.assertEqual(fix(fixed), fixed)
+        self.assertEqual(fix("new SDK\n"), "new SDK\n")
+
     def test_manifest_matches_descriptor(self):
         text = package.manifest_text(application(), "v1.0.0")
         self.assertIn("device=waveshare-43b-imgdot\n", text)
